@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: isEmail,
-      message: 'Please fill a valid email address',
+      message: 'Ошибка: Введите валидный email адрес',
     },
   },
   password: {

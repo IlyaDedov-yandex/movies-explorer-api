@@ -28,7 +28,7 @@ const movieSchema = mongoose.Schema({
     required: true,
     validate: {
       validator: isUrl,
-      message: 'Ошибка: Введите валидный url адресс',
+      message: 'Ошибка: Введите валидный url адрес',
     },
   },
   trailerLink: {
@@ -36,7 +36,7 @@ const movieSchema = mongoose.Schema({
     required: true,
     validate: {
       validator: isUrl,
-      message: 'Ошибка: Введите валидный url адресс',
+      message: 'Ошибка: Введите валидный url адрес',
     },
   },
   thumbnail: {
@@ -44,7 +44,7 @@ const movieSchema = mongoose.Schema({
     required: true,
     validate: {
       validator: isUrl,
-      message: 'Ошибка: Введите валидный url адресс',
+      message: 'Ошибка: Введите валидный url адрес',
     },
   },
   owner: {

@@ -9,7 +9,7 @@ const getMovies = (req, res, next) => {
   const userId = req.user._id;
   return Movie.find({ owner: userId })
     .then((movies) => {
-      if (movies) {
+      if (movies.length > 0) {
         return res
           .status(SUCCESS_CODE)
           .send(movies);

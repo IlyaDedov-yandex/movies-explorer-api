@@ -39,7 +39,12 @@ const login = (req, res, next) => {
       const token = jwtSign(user._id);
       res
         .status(SUCCESS_CODE)
-        .send({ token });
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .end();
     })
     .catch(() => next(new UnauthorizedError('Ошибка: Ошибка аутентификации')));
 };
