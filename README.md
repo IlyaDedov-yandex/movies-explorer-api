@@ -9,10 +9,9 @@
 ### возвращает все сохранённые текущим  пользователем фильмы
 * GET /movies;
 
-### создаёт фильм с переданными в теле
-# country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail, movieId 
+### создаёт фильм с переданными в теле 
 * POST /movies;
 
 # удаляет сохранённый фильм по id
-* DELETE /movies/_id;
+* DELETE /movies/_id;  
 **[Ссылка на backend](https://api.movies.practicum.nomoredomains.work/)**
