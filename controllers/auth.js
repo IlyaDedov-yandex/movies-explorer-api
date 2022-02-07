@@ -49,7 +49,18 @@ const login = (req, res, next) => {
     .catch(() => next(new UnauthorizedError('Ошибка: Ошибка аутентификации')));
 };
 
+const signout = (req, res) => {
+  res
+    .status(SUCCESS_CODE)
+    .clearCookie('jwt', {
+      secure: true,
+      sameSite: 'none',
+    })
+    .end();
+};
+
 module.exports = {
   createUser,
   login,
+  signout,
 };
