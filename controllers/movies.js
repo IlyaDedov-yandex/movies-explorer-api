@@ -3,7 +3,13 @@ const Movie = require('../models/movie');
 const BadRequestError = require('../errors/bad-request-error');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
-const { SUCCESS_CODE } = require('../utils/constants');
+const {
+  CAST_ERROR,
+  VALIDATION_ERROR,
+  NOTFOUND_FILMS_MESSAGE,
+  BAD_REQUEST_FILMS_MESSAGE,
+  FORBIDDEN_FILMS_MESSAGE,
+} = require('../utils/constants');
 
 const getMovies = (req, res, next) => {
   const userId = req.user._id;
@@ -11,25 +17,22 @@ const getMovies = (req, res, next) => {
     .then((movies) => {
       if (movies.length > 0) {
         return res
-          .status(SUCCESS_CODE)
           .send(movies);
       }
-      throw new NotFoundError('Ошибка: Фильмы не найдены');
+      throw new NotFoundError(NOTFOUND_FILMS_MESSAGE);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === CAST_ERROR) {
         return next(new BadRequestError(`Ошибка: ${err.message}`));
       }
       return next(err);
     });
 };
 const createMovie = (req, res, next) => Movie.create({ ...req.body, owner: req.user._id })
-  .then((movie) => res
-    .status(SUCCESS_CODE)
-    .send(movie))
+  .then((movie) => res.send(movie))
   .catch((err) => {
-    if (err.name === 'ValidationError') {
-      return next(new BadRequestError('Ошибка: Переданы некорректные данные при создании фильма.'));
+    if (err.name === VALIDATION_ERROR) {
+      return next(new BadRequestError(BAD_REQUEST_FILMS_MESSAGE));
     }
     return next(err);
   });
@@ -39,20 +42,18 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(_id)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('Ошибка: Фильм с указанным _id не найден.');
+        throw new NotFoundError(NOTFOUND_FILMS_MESSAGE);
       }
       if (req.user._id !== movie.owner.toString()) {
-        throw new ForbiddenError('Ошибка: Не достаточно прав для удаления фильма');
+        throw new ForbiddenError(FORBIDDEN_FILMS_MESSAGE);
       }
       return Movie.findByIdAndRemove(_id)
-        .then((cardToDelete) => res
-          .status(SUCCESS_CODE)
-          .send(cardToDelete))
+        .then((cardToDelete) => res.send(cardToDelete))
         .catch((err) => next(err));
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Ошибка: Передан невалидный _id.'));
+      if (err.name === CAST_ERROR) {
+        return next(new BadRequestError(BAD_REQUEST_FILMS_MESSAGE));
       }
       return next(err);
     });
