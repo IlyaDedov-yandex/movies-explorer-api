@@ -6,6 +6,6 @@ const { signupValidation } = require('../middlewares/validate');
 
 router.post('/signup', signupValidation, createUser);
 router.post('/signin', signinValidation, login);
-router.post('/signout', signout);
+router.get('/signout', signout);
 
 module.exports = router;

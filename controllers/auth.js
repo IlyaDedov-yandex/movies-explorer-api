@@ -22,11 +22,20 @@ const createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res
-      .send({
-        name: user.name,
-        email: user.email,
-      }))
+    .then((user) => {
+      const token = jwtSign(user._id);
+      res
+        .status(SUCCESS_CODE)
+        .cookie('jwt', token, {
+          maxAge: COOKIES_MAX_AGE,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .send({
+          name: user.name,
+          email: user.email,
+        });
+    })
     .catch((err) => {
       if (err.name === VALIDATION_ERROR) {
         return next(new BadRequestError(BAD_REQUEST_USER_MESSAGE));
@@ -63,7 +72,7 @@ const signout = (req, res) => {
     .status(SUCCESS_CODE)
     .clearCookie('jwt', {
       secure: true,
-      sameSite: 'none',
+      sameSite: true,
     })
     .end();
 };

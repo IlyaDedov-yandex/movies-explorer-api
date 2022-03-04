@@ -12,12 +12,15 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const checkErrors = require('./middlewares/check-errors');
 const { limiter } = require('./middlewares/rate-limits');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 4000 } = process.env;
 
 const app = express();
 app.use(requestLogger);
 app.use(limiter);
-app.use(cors());
+app.use(cors({
+  origin: 'https://api.movies.practicum.nomoredomains.work',
+  credentials: true,
+}));
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
