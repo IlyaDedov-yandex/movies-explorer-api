@@ -29,7 +29,8 @@ const createUser = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: COOKIES_MAX_AGE,
           httpOnly: true,
-          sameSite: true,
+          secure: true,
+          sameSite: false,
         })
         .send({
           name: user.name,
