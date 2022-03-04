@@ -18,7 +18,8 @@ const app = express();
 app.use(requestLogger);
 app.use(limiter);
 app.use(cors({
-  origin: '*',
+  origin: ['https://movies.practicum.nomoredomains.work/', /\.movies.practicum.nomoredomains.work$/, 'http://movies.practicum.nomoredomains.work/'],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
 app.use(helmet());
