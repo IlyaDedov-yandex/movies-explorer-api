@@ -30,7 +30,6 @@ const createUser = (req, res, next) => {
           maxAge: COOKIES_MAX_AGE,
           httpOnly: true,
           secure: true,
-          sameSite: false,
         })
         .send({
           name: user.name,
