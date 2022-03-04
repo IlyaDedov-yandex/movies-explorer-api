@@ -18,7 +18,7 @@ const app = express();
 app.use(requestLogger);
 app.use(limiter);
 app.use(cors({
-  origin: 'https://api.movies.practicum.nomoredomains.work',
+  origin: 'https://movies.practicum.nomoredomains.work',
   credentials: true,
 }));
 app.use(helmet());
