@@ -16,12 +16,11 @@ const {
 } = require('../utils/constants');
 
 const createUser = (req, res, next) => {
-  bcrypt.hash(req.body.password, SALT_ROUNDS)
-    .then((hash) => User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: hash,
-    }))
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    throw new BadRequestError(BAD_REQUEST_USER_MESSAGE);
+  }
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwtSign(user._id);
       res
@@ -31,20 +30,37 @@ const createUser = (req, res, next) => {
           httpOnly: true,
           secure: true,
         })
-        .send({
-          name: user.name,
-          email: user.email,
-        });
+        .end();
     })
-    .catch((err) => {
-      if (err.name === VALIDATION_ERROR) {
-        return next(new BadRequestError(BAD_REQUEST_USER_MESSAGE));
-      }
-      if (err.code === DUPLICATE_KEY_CODE) {
-        return next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
-      }
-      return next(err);
-    });
+    .catch(() => bcrypt.hash(req.body.password, SALT_ROUNDS)
+      .then((hash) => User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: hash,
+      }))
+      .then((user) => {
+        const token = jwtSign(user._id);
+        res
+          .status(SUCCESS_CODE)
+          .cookie('jwt', token, {
+            maxAge: COOKIES_MAX_AGE,
+            httpOnly: true,
+            secure: true,
+          })
+          .send({
+            name: user.name,
+            email: user.email,
+          });
+      })
+      .catch((err) => {
+        if (err.name === VALIDATION_ERROR) {
+          return next(new BadRequestError(BAD_REQUEST_USER_MESSAGE));
+        }
+        if (err.code === DUPLICATE_KEY_CODE) {
+          return next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
+        }
+        return next(err);
+      }));
 };
 
 const login = (req, res, next) => {
@@ -60,7 +76,7 @@ const login = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: COOKIES_MAX_AGE,
           httpOnly: true,
-          sameSite: true,
+          secure: true,
         })
         .end();
     })
